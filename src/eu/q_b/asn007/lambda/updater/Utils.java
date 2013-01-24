@@ -19,17 +19,18 @@ import java.security.MessageDigest;
 import java.util.Formatter;
 
 import javax.swing.JProgressBar;
+
 public class Utils {
 
-private static File workDir = null;
-	
+	private static File workDir = null;
+
 	public static File getWorkingDirectory() {
 
-		workDir = getWorkingDirectory("minecraft");
+		workDir = getWorkingDirectory(".minecraft");
 
 		return workDir;
 	}
-	
+
 	public static File getWorkingDirectory(String applicationName) {
 		String userHome = System.getProperty("user.home", ".");
 		File workingDirectory;
@@ -47,8 +48,8 @@ private static File workDir = null;
 				workingDirectory = new File(userHome, applicationName + '/');
 			break;
 		case 3:
-			workingDirectory = new File(userHome,
-					"Library" +File.separator + "Application Support" + File.separator + applicationName);
+			workingDirectory = new File(userHome, "Library" + File.separator
+					+ "Application Support" + File.separator + applicationName);
 			break;
 		default:
 			workingDirectory = new File(userHome, applicationName + '/');
@@ -60,16 +61,15 @@ private static File workDir = null;
 							+ workingDirectory);
 		return workingDirectory;
 	}
-	
+
 	public static String getMD5(File f) {
 		try {
-			return calculateHash(
-					MessageDigest.getInstance("MD5"), f.toString());
+			return calculateHash(MessageDigest.getInstance("MD5"), f.toString());
 		} catch (Exception e) {
 			return "";
 		}
 	}
-	
+
 	public static String calculateHash(MessageDigest algorithm, String fileName)
 			throws Exception {
 		FileInputStream fis = new FileInputStream(fileName);
@@ -92,7 +92,6 @@ private static File workDir = null;
 		return formatter.toString();
 	}
 
-	
 	public static String readFileAsString(String filePath, String defaultVar) {
 		try {
 			StringBuffer fileData = new StringBuffer(1000);
@@ -110,8 +109,8 @@ private static File workDir = null;
 			return defaultVar;
 		}
 	}
-	
-	public static  OS getPlatform() {
+
+	public static OS getPlatform() {
 		String osName = System.getProperty("os.name").toLowerCase();
 		if (osName.contains("win"))
 			return OS.windows;
@@ -128,10 +127,10 @@ private static File workDir = null;
 		return OS.unknown;
 	}
 
-	public static  enum OS {
+	public static enum OS {
 		linux, solaris, windows, macos, unknown;
 	}
-	
+
 	public static void download(URL url, File f, JProgressBar progressbar)
 			throws Exception {
 
@@ -170,8 +169,6 @@ private static File workDir = null;
 			return;
 
 	}
-
-
 
 	public static String runGET(String URL, String param) {
 		try {
@@ -232,7 +229,7 @@ private static File workDir = null;
 				connection.disconnect();
 		}
 	}
-	
+
 	public static boolean isOnline() {
 		URL url;
 		URLConnection urlconn;
@@ -250,6 +247,5 @@ private static File workDir = null;
 		}
 
 	}
-	
-	
+
 }

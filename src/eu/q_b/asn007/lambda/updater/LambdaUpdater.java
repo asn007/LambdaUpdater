@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import com.sun.awt.AWTUtilities;
@@ -44,7 +45,7 @@ public class LambdaUpdater {
 				JOptionPane
 						.showMessageDialog(
 								null,
-								"Ой... lambdaUpdater'у не удалось загрузить новую версию лаунчера... Если ошибка повторяется, покажите лог ошибки ниже разработчику:\n"
+								"Whoops... LambdaUpdater could not update the launcher. If error persists, restart the launcher and show developer this log:\n"
 										+ stack2string(e),
 								"ERROR: FAILED TO START LAUNCHER",
 								JOptionPane.ERROR_MESSAGE);
@@ -71,7 +72,7 @@ public class LambdaUpdater {
 				JOptionPane
 						.showMessageDialog(
 								null,
-								"Лаунчер не загружен, а вы находитесь не в сети.. \nДля первого запуска необходимо быть в сети!",
+								"Main module is not downloaded, but you're offline! To continue, connect to the Internet",
 								"ERROR: SYSTEM IS OFFLINE",
 								JOptionPane.ERROR_MESSAGE);
 				System.exit(0);
@@ -107,7 +108,7 @@ public class LambdaUpdater {
 				JOptionPane
 						.showMessageDialog(
 								null,
-								"Ой... lambdaUpdater'у не удалось запустить лаунчер. Если ошибка повторяется, покажите лог ошибки ниже разработчику:\n"
+								"Whoops... LambdaUpdater could not start the main module... If this error persists, show the developer this log:\n"
 										+ stack2string(localException),
 								"ERROR: FAILED TO START LAUNCHER",
 								JOptionPane.ERROR_MESSAGE);
@@ -159,7 +160,11 @@ public class LambdaUpdater {
 		frame.setForeground(Color.black);
 		frame.setBounds(100, 100, 450, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().add(progressBar);
+		JPanel j = new JPanel();
+		j.setForeground(Color.black);
+		j.setBackground(Color.black);
+		j.add(progressBar);
+		frame.getContentPane().add(j);
 		thread.start();
 	}
 
