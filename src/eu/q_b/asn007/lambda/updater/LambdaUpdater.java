@@ -1,6 +1,6 @@
 package eu.q_b.asn007.lambda.updater;
 
-import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.io.File;
 import java.io.IOException;
@@ -12,35 +12,30 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
-
 import com.sun.awt.AWTUtilities;
 
 public class LambdaUpdater {
 
 	private JFrame frame;
-	private ProgressBar progressBar;
+
 	private File launcherFile = new File(Utils.getWorkingDirectory()
 			+ File.separator + "launcher.jar");
+	private CProgress progressCircle;
 	private Thread thread = new Thread() {
 		public void run() {
-			progressBar.setValue(10);
-			if (Utils.isOnline()) {
-				if (needsUpdate())
-					update();
-				launchLauncher();
-			} else
-				launchLauncher();
-
+			if (needsUpdate())
+				update();
+			launchLauncher();
 		}
 
 		private void update() {
 			try {
 				Utils.download(
-						new URL(Utils.runGET(
-								"http://lambda.q-b.eu/api/api.php",
-								"act=launcherurl")), launcherFile, progressBar);
+						new URL(Utils
+								.runGET("http://lambda.q-b.eu/api/api.php",
+										"act=launcherurl").trim()
+								.replace("\n", "")), launcherFile,
+						progressCircle);
 			} catch (Exception e) {
 				JOptionPane
 						.showMessageDialog(
@@ -56,10 +51,12 @@ public class LambdaUpdater {
 		}
 
 		private boolean needsUpdate() {
-			progressBar.setValue(45);
-			if (!Utils.getMD5(launcherFile).equals(
-					Utils.runGET("http://lambda.q-b.eu/api/api.php",
-							"act=launcherhash")))
+			String s = Utils
+					.runGET("http://lambda.q-b.eu/api/api.php",
+							"act=launcherhash").replace("\n", "").trim();
+			if (s == null || s.equals(""))
+				return false;
+			if (!s.equals(Utils.getMD5(launcherFile)))
 				return true;
 			else
 				return false;
@@ -68,7 +65,6 @@ public class LambdaUpdater {
 		private void launchLauncher() {
 
 			if (!launcherFile.exists()) {
-				progressBar.setValue(0);
 				JOptionPane
 						.showMessageDialog(
 								null,
@@ -77,7 +73,7 @@ public class LambdaUpdater {
 								JOptionPane.ERROR_MESSAGE);
 				System.exit(0);
 			}
-			progressBar.setValue(100);
+
 			try {
 
 				ArrayList<String> localArrayList = new ArrayList<String>();
@@ -122,17 +118,7 @@ public class LambdaUpdater {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					UIManager.setLookAndFeel(UIManager
-							.getSystemLookAndFeelClassName());
-					LambdaUpdater window = new LambdaUpdater();
-					window.frame.setUndecorated(true);
-					window.frame.setResizable(false);
-					AWTUtilities.setWindowOpaque(window.frame, false);
-					window.frame.setVisible(true);
-					window.frame.setLocationRelativeTo(null);
-					window.frame.setAlwaysOnTop(true);
-					window.frame.setIconImage(ImageIO.read(LambdaUpdater.class
-							.getResourceAsStream("/eu/q_b/asn007/lambda/updater/icon.png")));
+					new LambdaUpdater();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -146,25 +132,19 @@ public class LambdaUpdater {
 
 	private void initialize() {
 		frame = new JFrame();
-
+		frame.setSize(new Dimension(200, 200));
+		frame.setUndecorated(true);
 		try {
-			progressBar = new ProgressBar(
-					ImageIO.read(LambdaUpdater.class
-							.getResourceAsStream("/eu/q_b/asn007/lambda/updater/lambda-loader.png")),
-					ImageIO.read(LambdaUpdater.class
-							.getResourceAsStream("/eu/q_b/asn007/lambda/updater/lambda-loader-gray.png")));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		frame.setBackground(Color.black);
-		frame.setForeground(Color.black);
-		frame.setBounds(100, 100, 450, 300);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		JPanel j = new JPanel();
-		j.setForeground(Color.black);
-		j.setBackground(Color.black);
-		j.add(progressBar);
-		frame.getContentPane().add(j);
+			frame.setIconImage(ImageIO.read(LambdaUpdater.class
+					.getResourceAsStream("/eu/q_b/asn007/lambda/updater/icon.png")));
+		} catch (IOException ignored) {}
+		progressCircle = new CProgress(frame.getContentPane());
+		progressCircle.setIndeterminate(true);
+		frame.getContentPane().add(progressCircle);
+		AWTUtilities.setWindowOpaque(frame, false);
+		frame.setVisible(true);
+		frame.setLocationRelativeTo(null);
+		System.out.println("Lolita");
 		thread.start();
 	}
 
